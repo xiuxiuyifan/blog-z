@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>控制并发</title>
+  </head>
+  <body>
+    <!-- <img
+      src="https://pic1.zhimg.com/v2-bcc3a4c978bd258b72fe79dc8ba5d1b3_r.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pic3.zhimg.com/v2-abf8965d41ad81e585b2bc71d6a8e6ab_r.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pic1.zhimg.com/v2-fd6d4121c8df60a2c427c3ce35b2f3a1_r.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pic1.zhimg.com/80/v2-ac760c6b2a441c0007b15bcb959f8ae4_720w.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pic1.zhimg.com/v2-75e9b591eb12dafcb18c2a3ef97e7a97_r.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pic2.zhimg.com/80/v2-757202cd98de7f1ef42b813ea31f0d8b_720w.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pica.zhimg.com/v2-f50531989ea807447614ab5f9b9f5d8d_r.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pica.zhimg.com/v2-33503b627930f6ce806337a51e20920b_r.jpg?source=1940ef5c"
+      alt=""
+    /><img
+      src="https://pica.zhimg.com/v2-28a1a91f445cd2e88606a19f2a0eafc9_r.jpg?source=1940ef5c"
+      alt=""
+    /> -->
+    <script>
+      // 请求图片进行预加载
+      const loadImg = (url) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onerror = (e) => {
+            reject(e);
+          };
+          img.onload = () => {
+            resolve(url);
+          };
+          img.src = url;
+        });
+      };
+
+      // 依次加载图片
+      const urls = [
+        "https://pic1.zhimg.com/v2-bcc3a4c978bd258b72fe79dc8ba5d1b3_r.jpg?source=1940ef5c",
+        "https://pic3.zhimg.com/v2-abf8965d41ad81e585b2bc71d6a8e6ab_r.jpg?source=1940ef5c",
+        "https://pic1.zhimg.com/v2-fd6d4121c8df60a2c427c3ce35b2f3a1_r.jpg?source=1940ef5c",
+        "https://pic1.zhimg.com/80/v2-ac760c6b2a441c0007b15bcb959f8ae4_720w.jpg?source=1940ef5c",
+        "https://pic1.zhimg.com/v2-75e9b591eb12dafcb18c2a3ef97e7a97_r.jpg?source=1940ef5c",
+        "https://pic2.zhimg.com/80/v2-757202cd98de7f1ef42b813ea31f0d8b_720w.jpg?source=1940ef5c",
+        "https://pic1.zhimg.com/v2-3cfce8c427dbfb1a2af01ac80e2e2d7c_r.jpg?source=1940ef5c",
+        "https://pic1.zhimg.com/80/v2-107931188ecbee2e13e12e3e8ca3f00e_720w.jpg?source=1940ef5c",
+        "https://pica.zhimg.com/80/v2-c0af984905a070f282cb9d75c7d01e31_720w.jpg?source=1940ef5c",
+        "https://pic2.zhimg.com/80/v2-417a2cdc0649441b0e03021534a22bdc_720w.jpg?source=1940ef5c",
+        "https://pic3.zhimg.com/80/v2-0a2f7f2a46928b47a809013f5d4467d0_720w.jpg?source=1940ef5c",
+        "https://pic1.zhimg.com/80/v2-3f22da16d8a4a2772c9b84820690588a_720w.jpg?source=1940ef5c",
+        "https://pic3.zhimg.com/80/v2-dcf2d205e8a92e6d5f4249446cfc5d3e_720w.jpg?source=1940ef5c",
+        "https://pic2.zhimg.com/80/v2-94bfed5e84d0e76bf6afc7a7b64d93e0_720w.jpg?source=1940ef5c",
+        "https://pica.zhimg.com/80/v2-822aa830f9c4ee438bbd905878e0f279_720w.jpg?source=1940ef5c",
+        "https://pic2.zhimg.com/80/v2-273546076e049b6496ff512996494a40_720w.jpg?source=1940ef5c",
+      ];
+
+    //   urls.reduce((prevPromise, url) => {
+    //     return prevPromise.then(() => loadImg(url));
+    //   }, Promise.resolve());
+
+      const loadByLimit = (urls, loadImg, limit) => {
+        const urlsCopy = [...urls];
+        if (urlsCopy.length < limit) {
+          // 如果数组长度小于最大并发数量，则直接发出全部请求
+          const promiseArray = urls.map((url) => loadImg(url));
+          return Promise.all(promiseArray);
+        }
+        //注意splice 方法会改变复制的数组
+        //先取出每次要发的请求数组
+        const promiseArray = urlsCopy
+          .splice(0, limit)
+          .map((url) => loadImg(url));
+
+        urlsCopy
+          .reduce(
+            (prevPromise, url) =>
+              prevPromise
+                .then(() => Promise.race(promiseArray))
+                .catch((e) => {
+                  console.log(e);
+                })
+                .then((resolveUrl) => {
+                  // 将已经请求成功的 url从promiseArray数组中删除掉
+                  let resolveUrlIndex = promiseArray.findIndex(
+                    (id) => resolveUrl === id
+                  );
+                  promiseArray.splice(resolveUrlIndex, 1);
+                  promiseArray.push(loadImg(url));
+                }),
+            Promise.resolve()
+          )
+          .then(() => Promise.all(promiseArray));
+      };
+
+      loadByLimit(urls, loadImg, 3)
+    </script>
+  </body>
+</html>

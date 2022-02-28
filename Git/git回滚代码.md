@@ -1,0 +1,5 @@
+## git reset
+
+
+
+## gir revert

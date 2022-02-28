@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>芳芳面试题</title>
+  </head>
+  <body>
+    <script>
+      // 什么是匿名函数？
+      // (function () {
+      //   var a = 100
+      //   console.log(a)
+      // })()
+
+      // !function () {
+      //   var a = 100
+      //   console.log(a);
+      // }()
+      //
+      // ;+function () {
+      //   var a = 100
+      //   console.log(a);
+      // }()
+      //
+      // ;-function () {
+      //   var a = 100
+      //   console.log(a);
+      // }()
+      //
+      // ~function () {
+      //   var a = 100
+      //   console.log(a);
+      // }()
+      //
+      // ;void function () {
+      //   var a = 100
+      //   console.log(a);
+      // }()
+    </script>
+
+    <script>
+      // 什么是闭包
+
+      // const add2 = function () {
+      //   let count = 0
+      //   return function add() {
+      //     count += 1
+      //     return count
+      //   }
+      // }()
+      //
+      // console.log(add2())
+      // console.log(add2())
+      // console.log(add2())
+    </script>
+
+    <script>
+      // 如何实现类
+      // 实现一个狗的类
+      // 假设：每个狗都有自己的名字，假设所有的狗都可以叫。
+      // function Dog(name) {
+      //   this.name = name
+      // }
+      // Dog.prototype.cry = function () {
+      //   console.log(`狗的名字是${this.name} ，并叫了一声。`)
+      // }
+      // let d = new Dog('旺财')
+      // console.log(d);
+      // d.cry()
+
+      // class Dog {
+      //   constructor(name) {
+      //     this.name = name
+      //   }
+      //   // 如何声明一个原型属性？
+      //   cry() {
+      //     console.log(`狗的名字是${this.name} ，并叫了一声。`)
+      //   }
+      // }
+      //
+      // let d = new Dog('锅铲')
+      // console.dir(d);
+    </script>
+
+    <script>
+      // 如何实现继承 ？
+
+      // es5
+      // 狗类继承动物类
+      // function Animal(legs) {
+      //   // 动物有腿
+      //   this.legs = legs
+      // }
+      //
+      // Animal.prototype.run = function () {
+      //   console.log('动物可以走')
+      // }
+      //
+      // function Dog(name) {
+      //   this.name = name
+      //   // 继承父类的属性
+      //   Animal.call(this, 4)  // 关键代码1，相当于 this.legs = 4
+      // }
+      // // 让子类的原型继承父类的原型
+      // // Dog.prototype.__proto__ = Animal.prototype // 关键代码2
+      //
+      // // 假如不让使用 __proto__
+      // let fn = function () {}
+      // fn.prototype = Animal.prototype
+      // Dog.prototype = new fn()
+      //
+      // Dog.prototype.cry = function () {
+      //   console.log('狗可以叫')
+      // }
+      //
+      // let d = new Dog('旺财')
+      // console.log(d);
+      // d.run()
+      // d.cry()
+
+      // class Animal {
+      //   constructor(legs) {
+      //     this.legs = legs
+      //   }
+      //   run() {
+      //     console.log('动物可以走')
+      //   }
+      // }
+
+      // class Dog extends Animal{
+      //   constructor(name) {
+      //     super(4);
+      //     this.name = name
+      //   }
+      //   cry() {
+      //     console.log(`狗可以叫`)
+      //   }
+      // }
+
+      // let d = new Dog('旺财')
+      // console.log(d);
+      // d.run()
+      // d.cry()
+    </script>
+    <script>
+      // 防抖和节流函数
+
+      // 防抖函数
+
+      // function debounce(fn, time) {
+      //   let timer = null
+      //   return function () {
+      //     if(timer) {
+      //       clearTimeout(timer)
+      //     }
+      //     timer = setTimeout(() => {
+      //       fn()
+      //     }, time)
+      //   }
+      // }
+
+      // let fn = debounce(() => {
+      //   console.log('hi')
+      // }, 3000)
+      // for(let i = 0; i< 100; i++ ) {
+      //   fn()
+      // }
+
+      // // 节流函数
+      // function throttle(fn, time) {
+      //   // 表示是否在冷却中
+      //   let cooldown = false;
+      //   let timer = null
+      //   return function () {
+      //     // 如果在冷却中，就不能再次释放技能
+      //     if(cooldown) return
+      //     cooldown = true   // 变成冷却中
+      //     timer = setTimeout(() => {
+      //       fn()
+      //       cooldown = false   // 等时间到了，变成不在冷却中
+      //     }, time)
+      //   };
+      // }
+
+      // var fn = throttle(() => {
+      //   console.log("闪现");
+      // }, 2000);
+
+      // 节流函数
+      // function throttle(fn, time) {
+      //   let timer = null
+      //   // 表示 技能 是否在冷却中
+      //   let cooldown = false
+      //   return function (...args) {
+      //     // 如果在冷却中， 就不能再释放技能
+      //     if(cooldown) return
+      //     // 执行一次 冷却中置为 true
+      //     cooldown = true
+      //     timer = setTimeout(() => {
+      //       fn.call(undefined, ...args)
+      //       cooldown = false  // 一次技能释放完成了
+      //     }, time)
+      //   }
+      // }
+    </script>
+
+    <script>
+      // 手写发布订阅者模式
+      // 先写使用方法
+
+      // 存贮 订阅者事件的数据结构是
+      // {
+      //   'xx': [fn, fn, fn]
+      // }
+
+      // 注意事项 去重
+
+      // let $ = {
+      //   // 记录 事件对应的 函数
+      //   pool: {},
+      //   on(name, fn) {
+      //     // 在缓存池中查找，有没有当前事件
+      //     !this.pool.hasOwnProperty(name) ? (this.pool[name] = []) : null;
+      //     // 把对应事件加入
+      //     // 加入的时候如果已经有了就不在添加了
+      //     let arr = this.pool[name];
+      //     if (arr.includes(fn)) {
+      //       return;
+      //     }
+      //     arr.push(fn);
+      //   },
+      //   emit(name, ...args) {
+      //     // 取出所有的事件进行循环，并且把 data 传递出去
+      //     let arr = this.pool[name] || [];
+      //     arr.forEach((fn) => {
+      //       fn.call(undefined, ...args);
+      //     });
+      //   },
+      //   // 如果要取消的话这里就不能传递匿名函数
+      //   off(name, fn) {
+      //     let arr = this.pool[name] || [];
+      //     let index = arr.indexOf(fn);
+      //     index !== -1 ? arr.splice(index, 1) : null;
+      //   },
+      // };
+
+      // let fn1 = (data) => {
+      //   console.log("hi", data);
+      // };
+
+      // let fn2 = (data) => {
+      //   console.log("hi", data);
+      // };
+      // $.on("xx", fn1);
+      // $.on("xxx", fn2);
+
+      // $.emit("xx", { data: 100 });
+      // $.off("xxx", fn2);
+
+      // $.emit("xxx", { data: 200 });
+
+
+      // let f1 = () => {}
+      // let f2 = () => {}
+
+      // console.log(f1 === f2)
+      // console.log(f1 === f1)
+      // let arr = [f1, f2]
+
+      // let index = arr.indexOf(f1)
+      // console.log(index)
+    </script>
+  </body>
+</html>

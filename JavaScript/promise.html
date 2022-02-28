@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise</title>
+  </head>
+  <body>
+    <script>
+      function MyPromise(executor) {
+        if (typeof executor !== "function")
+          throw new TypeError("参数必须是一个函数！");
+        const PENDING = "pending";
+        const FULFILLED = "fulfilled";
+        const REJECTED = "rejected";
+        // 1. 检验 executor 参数类型
+        // 2. 先调用 executor 函数
+        // 3. 定义 executor 函数的两个参数   resolve reject
+        // 4. 初始化状态和结果
+        // 5. then 的时候可以在成功和失败的函数中拿到 promise 实例的结果
+        this.promiseStatus = PENDING;
+        this.promiseValue = undefined;
+
+        // 成功状态改变的时候 调用的函数 相当于 then((res)=>{}, (reason)=>{}) 函数的第一个实参
+        this.resolveFunc = () => {};
+        // 失败状态改变的时候 调用的函数  相当于 then() 的第二个参数。
+        this.rejectFunc = () => {};
+
+        // 调用 resolve 或者 reject 函数都会改变自身实例的 结果和状态
+        // 所以我们写一个 专门用来改变状态的函数
+        var change = (status, value) => {
+          // 状态只能是 pending 的时候才能进来
+          // 意味着状态只能改变一次
+          if (this.promiseStatus !== PENDING) return;
+          this.promiseStatus = status;
+          this.promiseValue = value;
+          // 根据不同的状态调用不同的处理函数
+          // 由于在执行 executor 函数的时候 内部调用了 resolve更改status和value是同步的
+          // 但是执行 通知方法要的是异步的（因为此时.then()后面的方法还没执行回调函数还没注册好）
+          // 所以我们用srtTimeout() 把执行 then里面的方法异步执行
+          setTimeout(() => {
+            status === FULFILLED
+              ? this.resolveFunc(this.promiseValue)
+              : this.rejectFunc(this.promiseValue);
+          }, 0);
+        };
+        var resolve = (value) => {
+          change(FULFILLED, value);
+        };
+        var reject = (value) => {
+          change(REJECTED, value);
+        };
+        // executor 函数执行报错的话直接调用 reject
+        try {
+          executor(resolve, reject);
+        } catch (err) {
+          change(REJECTED, err);
+        }
+      }
+
+      MyPromise.resolve = function (result) {
+        return new MyPromise((resolve) => {
+          resolve(result);
+        });
+      };
+
+      MyPromise.reject = function (reason) {
+        return new MyPromise((resolve, reject) => {
+          reject(reason);
+        });
+      };
+      MyPromise.all = function (promiseArr) {
+        return new MyPromise((resolve, reject) => {
+          let index = 0,
+            results = [];
+          for (let i = 0; i < promiseArr.length; i++) {
+            // 如果index >= 数组的长度 就抛出最终的结果
+            let fire = () => {
+              if (index === promiseArr.length) {
+                resolve(results);
+                return;
+              }
+            };
+            // 先看每个item是不是一个 promise ，如果不是的话就把他放在对应的结果上面
+            let item = promiseArr[i];
+            // 不是promise 就直接设置返回结果
+            if (!(item instanceof MyPromise)) {
+              results[i] = item;
+              index++;
+              fire()
+              continue;
+            }
+            // 如果是promise 就执行
+            item
+              .then((res) => {
+                results[i] = res;
+                index++;
+                fire()
+              })
+              .catch((reason) => {
+                reject(reason);
+              });
+          }
+        });
+      };
+
+      MyPromise.prototype.then = function (resolveFunc, rejectFunc) {
+        // 不传递参数的话可以顺延
+        if (typeof resolveFunc !== "function") {
+          // 默认返回一个成功的 promise
+          resolveFunc = (result) => {
+            return new MyPromise.resolve(result);
+          };
+        }
+
+        if (typeof rejectFunc !== "function") {
+          rejectFunc = (reason) => {
+            // 默认返回一个失败的 promise
+            return new MyPromise.reject(reason);
+          };
+        }
+        // this.resolveFunc = resolveFunc;
+        // this.rejectFunc = rejectFunc;
+        return new MyPromise((resolve, reject) => {
+          // 把之前的函数包一层，在内部进行调用，
+          // 1. 拿到 上一个 then的返回结果
+          // 2. 检测上一个 then的回调函数是否报错
+          this.resolveFunc = (result) => {
+            try {
+              // 如果执行不报错，则返回的实例是成功的（特殊情况：then A 方法也返回的是一个promise）
+              // 则由返回的promise实例决定这个实例的状态
+              let x = resolveFunc(result);
+              x instanceof MyPromise ? x.then(resolve, reject) : resolve(x);
+            } catch (err) {
+              // 如果执行报错则这个实例的状态就失败
+              reject(err);
+            }
+          };
+
+          this.rejectFunc = (reason) => {
+            try {
+              let x = rejectFunc(reason);
+              x instanceof MyPromise ? x.then(resolve, reject) : resolve(x);
+            } catch (err) {
+              reject(err);
+            }
+          };
+        });
+      };
+
+      MyPromise.prototype.catch = function (rejectFunc) {
+          // 相当于 then 不传第一个参数
+        return this.then(null, rejectFunc);
+      };
+      let p = new MyPromise((resolve, reject) => {
+        resolve("ok");
+      });
+
+      p.then(
+        (res) => {
+          return MyPromise.reject("err");
+        },
+        (reason) => {
+          console.log(reason);
+        }
+      ).then(
+        (res) => {
+          console.log(res);
+        },
+        (reason) => {
+          console.log(reason);
+        }
+      );
+
+      let p1 = new MyPromise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(1);
+        }, 1000);
+      });
+      let p2 = new MyPromise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(2);
+        }, 10);
+      });
+      let p3 = new MyPromise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(3);
+        }, 2000);
+      });
+
+      let arr = MyPromise.all([p1, p2, p3, 100]);
+      arr.then(
+        (res) => {
+          console.log(res);
+        },
+        (reason) => {
+          console.log(reason);
+        }
+      );
+      //   MyPromise.resolve("1000").then((res) => {
+      //     console.log(res);
+      //   });
+
+      //   MyPromise.reject("reject").then(
+      //     () => {},
+      //     (reason) => {
+      //       console.log(reason);
+      //     }
+      //   );
+    </script>
+  </body>
+</html>

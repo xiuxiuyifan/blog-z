@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>03.堆栈面试题(GO和对象成员类型)</title>
+  </head>
+  <body>
+    <script>
+      // var a = {},
+      //     b = '0',
+      //     c = 0;
+      // a[b] = '小明';
+      // a[c] = '大明';
+      // console.log(a[b])    // 大明
+
+      // var a = {},
+      //     b = Symbol('1'),
+      //     c = Symbol('1')
+      // a[b] = '小明'
+      // a[c] = '大明'
+      // console.log(a[b])  // 小明
+
+      // var a = {}
+      //     b = {
+      //         n: '1'
+      //     },
+      //     c = {
+      //         m: '2'
+      //     }
+      // a[b] = 'a'  // a[object Object] = a
+      // a[c] = 'b'  // a[object Object] = b
+      // console.log(a[b])   // b
+
+      var a = {
+        n: 1,
+      };
+      var b = a;
+      a.x = a = {
+        n: 2,
+      };
+      console.log(a.x);
+      console.log(b);
+
+      //   var x = [12, 23];
+
+      //   function fn(y) {
+      //     y[0] = 100;   //  [100, 23]  引用还指向的是 x
+      //     y = [100];    //  [100]      在堆内存中新创建了一个，并把 y 指向这个地址。
+      //     y[1] = [200]; //  [200]
+      //   }
+
+      //   fn(x);
+      //   console.log(x);
+    </script>
+  </body>
+</html>

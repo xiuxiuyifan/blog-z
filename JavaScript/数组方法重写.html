@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数组方法重写</title>
+  </head>
+  <body>
+    <script>
+      Array.prototype.reduce = function (callback, initValue) {
+        // 第一个参数类型检测
+        if (typeof callback !== "function") {
+          throw new TypeError("请检查,第一个参数必须是函数");
+        }
+        let arr = this;
+        let ret;
+        let initIndex = 0
+        // 没有传默认值，从数组的第一项开始便利
+        if (initValue === undefined) {
+          ret = arr[0];
+          initIndex = 1
+        } else {
+          ret = initValue;
+        }
+        for (let i = initIndex; i < arr.length; i++) {
+          ret = callback(ret, arr[i], i, arr);
+        }
+        return ret;
+      };
+
+      let result = [1, 2, 3, 4].reduce((acc, curr) => acc + curr, 10);
+    </script>
+  </body>
+</html>

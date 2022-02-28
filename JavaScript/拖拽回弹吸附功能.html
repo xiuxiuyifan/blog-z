@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,user-scalable=no"
+    />
+    <title>---</title>
+    <script>
+      // 设置 页面 rem
+      // 假设设计稿和屏幕都是 750px，现在为了便于计算，我们用屏幕宽度除以 75 得出 根字体大小
+      //   document.documentElement.style.fontSize =
+      //     document.documentElement.clientWidth / 37.5 + "px";
+    </script>
+    <style>
+      html,
+      body {
+        width: 100%;
+        overflow: hidden;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .result-area {
+        display: flex;
+        margin-top: 50px;
+      }
+      .result-area .res-wrapper {
+        width: 25vw;
+        height: 25vw;
+        padding: 4px;
+      }
+      .result-area .res-wrapper .res-item {
+        border: 1px solid pink;
+        width: 100%;
+        height: 100%;
+      }
+      .result-area .res-wrapper:nth-child(4n + 1) {
+        /* padding-left: 0; */
+      }
+
+      .idioms-area {
+        display: flex;
+        margin-top: 100px;
+        flex-wrap: wrap;
+      }
+      .idioms-area .idioms-wrapper {
+        padding: 4px;
+        width: 25%;
+        height: 25vw;
+        margin-bottom: 4px;
+      }
+      .idioms-area .idioms-wrapper .idioms-item {
+        width: 100%;
+        height: 100%;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fee3ec;
+        border: 2px solid #f2789f;
+      }
+      .idioms-area .idioms-wrapper:nth-child(4n + 1) {
+        /* padding-left: 0; */
+      }
+      .next-btn {
+        background: #00adb5;
+        border: 1px solid #393e46;
+        color: #eee;
+        margin: 0 auto;
+        width: 100px;
+        padding: 10px 15px;
+        text-align: center;
+        border-radius: 4px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="result-area">
+      <div class="res-wrapper">
+        <div class="res-item"></div>
+      </div>
+      <div class="res-wrapper">
+        <div class="res-item"></div>
+      </div>
+      <div class="res-wrapper">
+        <div class="res-item"></div>
+      </div>
+      <div class="res-wrapper">
+        <div class="res-item"></div>
+      </div>
+    </div>
+    <div class="idioms-area"></div>
+    <!-- <div class="next-btn">再来一次</div> -->
+    <script>
+      (function () {
+        let idioms = ["虎虎生威", "蒸蒸日上", "事事顺心", "余钱多多"];
+        let idiomsAreaRef = document.querySelector(".idioms-area");
+        let retAreaRef = document.querySelectorAll(".res-item");
+        let retItems = document.querySelectorAll(".res-item");
+
+        // 记录初始位置的数组
+        let initPosition = [],
+          retPosition = [], // 记录结果区域的位置
+          resArr = [], // 保存每次吸附成功之后的结果
+          cellX = 0, // 当前移动盒子距离页面最左侧的距离
+          cellY = 0; // 当前盒子距离页面顶部的距离
+
+        // 打乱成语, 并添加到页面中
+        let idiomChars = idioms
+          .reduce((acc, currValue) => {
+            return (acc += currValue);
+          }, "")
+          .split("")
+          .sort(() => {
+            return 0.5 - Math.random();
+          });
+
+        // 获取一组 dom 的位置
+        const getArea = (domCollection, arrWrapper) => {
+          for (let i = 0; i < domCollection.length; i++) {
+            let startX = domCollection[i].offsetLeft;
+            let startY = domCollection[i].offsetTop;
+            let width = domCollection[i].offsetWidth;
+            let height = domCollection[i].offsetHeight;
+            prevY = domCollection[i].offsetTop;
+            arrWrapper.push({
+              startX,
+              startY,
+              width,
+              height,
+            });
+          }
+        };
+
+        const render = (idiomChars) => {
+          let html = "";
+          idiomChars.forEach((item, index) => {
+            html += `<div class="idioms-wrapper">
+                  <div class="idioms-item" data-index="${index}">${item}</div>
+              </div>`;
+          });
+          idiomsAreaRef.innerHTML = html;
+        };
+
+        // 绑定事件
+        const bindEvent = () => {
+          let chars = document.querySelectorAll(".idioms-item");
+          const handleStart = (e) => {
+            let index = e.target.getAttribute("data-index");
+            // 保存完初始位置就设置当前元素元素为 fixed
+            e.target.style.left = initPosition[index].startX + "px";
+            e.target.style.top = initPosition[index].startY + "px";
+            e.target.style.width = initPosition[index].width + "px";
+            e.target.style.height = initPosition[index].height + "px";
+            e.target.style.opacity = 0.6;
+            e.target.style.zIndex = 1;
+            e.target.style.position = "fixed";
+          };
+          const handleMove = (e) => {
+            // 设置当前元素的 left 和 top
+            let left = e.touches[0].pageX - e.target.offsetWidth / 2;
+            let top = e.touches[0].pageY - e.target.offsetWidth / 2;
+            cellX = left;
+            cellY = top;
+            e.target.style.left = left + "px";
+            e.target.style.top = top + "px";
+          };
+          const handleEnd = function (e) {
+            let index = e.target.getAttribute("data-index");
+            e.target.style.opacity = 1;
+            let reset = true;
+
+            // 把当前拖动的元素，与所有满足吸附位置的结果进行对比。如果在条件范围内就进行吸附
+            for (let i = 0; i < retItems.length; i++) {
+              // 如果当前项已经有值了就跳过这个循环
+              if (resArr[i] !== undefined) {
+                continue;
+              }
+              let { startX, startY, width, height } = retPosition[i];
+              // 左边顶点   移动元素左顶点大于落地位置 小于落地位置+落地位置盒子宽度的一半
+              //				y轴大于左顶点的 y位置 小于 y 位置 + 盒子的宽度的一半
+              // 右边顶点   cellX + 盒子宽度等于 右顶点的位置
+              if (
+                (cellX > startX &&
+                  cellX <= startX + width / 2 &&
+                  cellY > startY &&
+                  cellY <= startY + startY / 2) ||
+                (cellX + width > startX + width / 2 &&
+                  cellX + width <= startX + width &&
+                  cellY > startY &&
+                  cellY <= startY + startY / 2)
+              ) {
+                e.target.style.left = startX + "px";
+                e.target.style.top = startY + "px";
+                resArr[i] = {
+                  el: this,
+                  char: this.innerHTML,
+                };
+                reset = false;
+              }
+            }
+            // 检测结果中是否有目标
+            if (resArr.length === 4) {
+              let idiom = resArr.reduce((acc, currValue) => {
+                acc += currValue.char;
+                return acc;
+              }, "");
+              if (idioms.includes(idiom)) {
+                setTimeout(() => {
+                  resArr.forEach((item) => {
+					  item.el.remove()
+                  });
+				  resArr = []
+                }, 1000);
+              }
+            }
+            if (!reset) {
+              return;
+            }
+            // 以及当前字符组成的成语是否在初始化的数组里面
+            // 归位
+            e.target.style.left = initPosition[index].startX + "px";
+            e.target.style.top = initPosition[index].startY + "px";
+            e.target.style.width = initPosition[index].width + "px";
+            e.target.style.height = initPosition[index].height + "px";
+            e.target.style.transitionProperty = "top, left";
+            e.target.style.transitionDuration = "200ms";
+            setTimeout(() => {
+              e.target.style.transitionProperty = null;
+              e.target.style.transitionDuration = null;
+            }, 200);
+          };
+          chars.forEach((charRef) => {
+            charRef.addEventListener("touchstart", handleStart, true);
+            charRef.addEventListener("touchmove", handleMove);
+            charRef.addEventListener("touchend", handleEnd);
+          });
+        };
+
+        const init = () => {
+          // 获取结果区域坐标
+          getArea(retAreaRef, retPosition);
+          render(idiomChars);
+          // 获取拖动盒子坐标
+          let idiomItems = document.querySelectorAll(".idioms-item");
+          getArea(idiomItems, initPosition);
+          bindEvent();
+        };
+
+        init();
+      })();
+    </script>
+  </body>
+</html>

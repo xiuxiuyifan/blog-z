@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>08 闭包和作用域的底层机制</title>
+  </head>
+  <body>
+    <script>
+      // let x = 5
+      // function fn(x) {
+      //     return function (y) {
+      //         console.log(y + (++x))
+      //     }
+      // }
+
+      // let f = fn(6)
+      // f(7)
+      // fn(8)(9)
+      // f(10)
+      // console.log(x)
+
+      // 7 + 6 = 13
+      // 9 + 7 = 16
+      // 10 + 8 = 18
+      // 8  = 8
+
+      // let x = 5
+      // function fn() {
+      //     return function (y) {
+      //         console.log(y + (++x))
+      //     }
+      // }
+
+      // let f = fn(6)
+      // f(7)
+      // fn(8)(9)
+      // f(10)
+      // console.log(x)
+
+      // function  fn() {
+      //     let x = 10
+      //     return function () {
+      //         x++
+      //     }
+      // }
+      // let f = fn()
+      // fn()
+
+      // function fn() {
+      //     let obj = {
+      //         name: 'xxx'
+      //     }
+      //     return obj
+      // }
+
+      // let o = fn()
+
+      // function fn() {
+      //     let x = 10
+      //     window.xxx = function () {
+      //         console.log(++x)
+      //     }
+      //     document.body.onclick = function () {
+      //         console.log(++x)
+      //     }
+      // }
+
+      // let a = 0,
+      //     b = 0;
+      // function A(a) {
+      //     A = function(b) {
+      //         alert(a + b++)
+      //     }
+      //     alert(a++)
+      // }
+      // A(1) // 1
+      // A(2) // 2 + 2 = 4
+
+      // getParams('https://nowcoder.com/online?id=1&salas=1000')
+      // {id:1, salas: 100}
+
+      //   function getParams(url) {
+      //     // 1. 先截取字符串
+      //     // 2. 再用 & 进行拆分
+      //     let index = url.indexOf("?") + 1; // 从后面一位开始截取
+      //     let str = url.substring(index);
+
+      //     let arr = str.split("&");
+      //     let ret = {};
+      //     arr.forEach((item) => {
+      //       let obj = item.split("=");
+      //       let key = obj[0];
+      //       let val = obj[1];
+      //       ret[key] = val;
+      //     });
+      //     return ret;
+      //   }
+
+      //   let ret = getParams('https://nowcoder.com/online?id=1&salas=1000')
+      //   console.log(ret)
+
+      // http://www.nowcoder.com?key=1&key=2&key=3&test=4#hehe key
+
+      // [1, 2, 3]
+
+      // 指定 key 返回该参数的值
+      // 没指定就返回所有的参数  如果参数的 key 相同就放到一个数组里面
+
+      //   第一种方式 ， 用字符串截取的方式
+
+      function getUrlParam(url, sKey) {
+        let startIndex = url.indexOf("?");
+        let endIndex = url.indexOf("#");
+        let str = url.substring(startIndex + 1, endIndex);
+        let arr = str.split("&");
+        //
+        let ret = {};
+        arr.forEach((item) => {
+          let [key, val] = item.split("=");
+          // 当前对象中不存在重复的值
+          if (ret[key] === undefined) {
+            ret[key] = val;
+          } else {
+            // 如果是string 就变成数组
+            if (typeof ret[key] === "string") {
+              // 原来的值与当前的值合并成一个数组
+              ret[key] = [ret[key], val];
+            } else if (Array.isArray(ret[key])) {
+              ret[key].push(val);
+            }
+          }
+        });
+        return sKey ? ret[sKey] || "" : ret;
+      }
+      //   function getUrlParam(sUrl, sKey) {
+      //     var paramArr = sUrl.split("?")[1].split("#")[0].split("&"); // 取出每个参数的键值对放入数组
+      //     const obj = {};
+      //     paramArr.forEach((element) => {
+      //       const [key, value] = element.split("="); // 取出数组中每一项的键与值
+      //       if (obj[key] === void 0) {
+      //         // 表示第一次遍历这个元素，直接添加到对象上面
+      //         obj[key] = value;
+      //       } else {
+      //         obj[key] = [].concat(obj[key], value); // 表示不是第一次遍历说明这个键已有，通过数组存起来。
+      //       }
+      //     });
+      //     return sKey === void 0 ? obj : obj[sKey] || ""; // 如果该方法为一个参数，则返回对象。
+      //     //如果为两个参数，sKey存在，则返回值或数组，否则返回空字符。
+      //   }
+
+      let ret = getUrlParam(
+        "http://www.nowcoder.com?key=1&key=2&key=3&test=4#hehe"
+      );
+      console.log(ret);
+    </script>
+  </body>
+</html>

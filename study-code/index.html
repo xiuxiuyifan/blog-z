@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>编程题目</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .nav-box {
+        position: absolute;
+        top: 0px;
+        right: 0;
+        width: 300px;
+        padding: 40px 20px;
+        background-color: #fff;
+        border-radius: 4px;
+      }
+      html{
+        background-color: #f4f5f5;
+        color: #333;
+      }
+      main {
+        max-width: 1140px;
+        position: relative;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .iframe-container{
+        position: relative;
+        width: 820px;
+        max-width: 100%;
+        border-radius: 4px;
+        background-color: #fff;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      li{
+        list-style: none;
+      }
+      html, body, main{
+        height: 100%;
+      }
+      .container{
+        height: 100%;
+      }
+      h2{
+        background: #fff;
+        padding: 0 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <ul id="ul" class="nav-box">
+        <li><a href="#1">1.实现一个trim方法</a></li>
+        <li><a href="#2">2.实现一个deepClone方法</a></li>
+      </ul>
+      <div class="container">
+        <div class="iframe-container">
+          <h2>1.实现一个trim方法</h2>
+          <iframe id="iframe" src="./1.实现一个trim方法.html" frameborder="0" height="100%"></iframe>
+        </div>
+      </div>
+    </main>
+    <script>
+      let ulRef = document.querySelector("#ul");
+      ulRef.onclick = function (e) {
+        let target = e.target;
+        let tagName = target.nodeName.toLocaleLowerCase();
+        if (tagName === "a") {
+          let text = target.innerText;
+          let src = `./${text}.html`;
+          let iframe = document.querySelector("#iframe");
+          let h2 = document.querySelector('h2')
+          h2.innerHTML = text
+          iframe.src = src;
+        }
+      };
+
+      // 初始化页面 
+      function initPage() {
+        
+      }
+
+      initPage()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>50.实现发布订阅者模式</title>
+    <style>
+      #box {
+        width: 100px;
+        height: 100px;
+        background: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box"></div>
+    <script>
+      //   [
+      //     {
+      //       type: "xxx",
+      //       func() {},
+      //     },
+      //   ];
+
+      //   {
+      //     xxx: [function () {}, function () {}];
+      //   }
+
+      //   var subscribe = (function () {
+      //     // 定义事件池
+      //     // {
+      //     //     xxx: [function(){}, function(){}]
+      //     // }
+      //     let pond = {};
+      //     // 事件池中方法的管理， 把函数按照事件类型加入到池子中去。
+      //     const on = function (type, fn) {
+      //       // 先判断有没有对应的事件类型，没有的话默认给空数组
+      //       !pond.hasOwnProperty(type) ? (pond[type] = []) : null;
+      //       let arr = pond[type];
+      //       // 验证添添加对应的类型有没有重复的，如果有重复的就不执行添加操作
+      //       for (let i = 0; i < arr.length; i++) {
+      //         if (arr[i] === fn) {
+      //           return;
+      //         }
+      //       }
+      //       // 等价的
+      //       //   arr.includes(fn) return
+      //       arr.push(fn);
+      //     };
+      //     // 触发事件池中对应的方法
+      //     const emit = function (type, ...params) {
+      //       // 依次执行对应类型的事件函数中的方法，并把参数传进去
+      //       let arr = pond[type] || [];
+      //       // 方法1、为了防止在触发方法的过程中删除事件池中的方法，所以克隆一份来执行
+      //       arr = arr.slice(0)
+      //       for (let i = 0; i < arr.length; i++) {
+      //         arr[i](params);
+      //       }
+      //     };
+      //     // 取消事件
+      //     const off = function (type, fn) {
+      //       let arr = pond[type] || [];
+      //       for (let i = 0; i < arr.length; i++) {
+      //         if (arr[i] === fn) {
+      //           // 从中移除
+      //           arr.splice(i, 1);
+      //         }
+      //       }
+      //     };
+      //     return {
+      //       on,
+      //       emit,
+      //       off,
+      //     };
+      //   })();
+
+      var subscribe = (function () {
+        // 定义事件池
+        // {
+        //     xxx: [function(){}, function(){}]
+        // }
+        let pond = {};
+        // 事件池中方法的管理， 把函数按照事件类型加入到池子中去。
+        const on = function (type, fn) {
+          // 先判断有没有对应的事件类型，没有的话默认给空数组
+          !pond.hasOwnProperty(type) ? (pond[type] = []) : null;
+          let arr = pond[type];
+          // 验证添添加对应的类型有没有重复的，如果有重复的就不执行添加操作
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === fn) {
+              return;
+            }
+          }
+          // 等价的
+          //   arr.includes(fn) return
+          arr.push(fn);
+        };
+        // 触发事件池中对应的方法
+        const emit = function (type, ...params) {
+            console.log('hihi')
+          // 依次执行对应类型的事件函数中的方法，并把参数传进去
+          let arr = pond[type] || [];
+          for (let i = 0; i < arr.length; i++) {
+            // 是函数的话再执行
+            if (typeof arr[i] === "function") {
+              arr[i](params);
+            } else {
+              // 不是函数的话就删除当前位置的元素, 从当前位置开始删除一个元素 
+              arr.splice(i, 1);
+              // 并且让遍历的下标不往后移动
+              i--
+            }
+          }
+          console.log(arr)
+        };
+        // 取消事件
+        const off = function (type, fn) {
+          let arr = pond[type] || [];
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === fn) {
+              // 不改变原始数组长度
+              arr[i] = null;
+            }
+          }
+        };
+        return {
+          on,
+          emit,
+          off,
+        };
+      })();
+
+      const fn1 = function (params) {
+        console.log(1, params);
+      };
+      const fn2 = function (params) {
+        console.log(2, params);
+        subscribe.off("A", fn1);
+        subscribe.off("A", fn2);
+      };
+      const fn3 = function (params) {
+        console.log(3, params);
+      };
+      const fn4 = function (params) {
+        console.log(4, params);
+      };
+      const fn5 = function (params) {
+        console.log(5, params);
+      };
+
+      subscribe.on("A", fn1);
+      subscribe.on("A", fn2);
+      subscribe.on("A", fn3);
+      subscribe.on("A", fn4);
+      subscribe.on("A", fn5);
+
+      let box = document.querySelector("#box");
+      box.onclick = function () {
+        subscribe.emit("A", 1, 2);
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二叉树</title>
+</head>
+<body>
+    <script>
+        class TreeNode{
+            constructor(val) {
+                this.val = val
+                this.left = left
+                this.right = right
+            }
+        }
+
+        // 新创建一个节点
+
+        let root = {
+            val: 'A',
+            left: {
+                val: 'B',
+                left: {
+                    val: 'D'
+                },
+                right: {
+                    val: 'E'
+                }
+            },
+            right: {
+                val: 'C',
+                right: {
+                    val: 'F'
+                }
+            }
+        }
+
+
+        // function preorder(root) {
+        //     // 判断有没有 root 节点， 如果没有直接返回
+        //     if(!root) {
+        //         return
+        //     }
+
+        //     // 如果有当前节点就打印当前节点的 val
+        //     console.log(root.val)
+            
+        //     // 递归遍历左子树
+        //     preorder(root.left)
+
+        //     // 递归遍历右子树
+        //     preorder(root.right)
+        // }
+
+        // preorder(root)
+
+        // 左根右
+        // function inorder(root) {
+        //     if(!root) {
+        //         return
+        //     }
+        //     inorder(root.left)
+        //     console.log(root.val)
+        //     inorder(root.right)
+        // }
+
+        // D
+        // B
+        // E
+        // A
+        // C
+        // F
+        // inorder(root)
+
+        // 后序遍历  左右根
+        function postorder(root) {
+            if(!root) {
+                return
+            }
+            postorder(root.left)
+            postorder(root.right)
+            console.log(root.val)
+        }
+
+        postorder(root)
+
+        D
+        E
+        B
+        F
+        C
+        A
+
+    </script>
+</body>
+</html>

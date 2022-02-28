@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>typescript</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="./dist/bundle.js"></script>
+    <script>
+      const dirTree = {
+        a: 1,
+        b: {
+          c: 3,
+          d: 4,
+        },
+        e: {
+          f: 5,
+        },
+      };
+
+      // 查找路径
+      function findPath(tree, fn, paths = []) {
+        // 如果当前值是对象的话就进行遍历
+        if (typeof tree == "object") {
+          for (let key in tree) {
+            let val = tree[key];
+            // 把当前路径加入 栈里面
+            paths.push(key);
+            // 会先看 value 与目标值是否相等，如果相等则直接返回
+            if(fn(val)) {
+              return paths
+            }
+            // 递归当前的 value 
+            let ret = findPath(val, fn, paths);
+            // 如果找到结果了就结束递归的过程
+            if(ret.length) return ret
+            // 没找到就撤销一开始保存的值，然后开始下一轮循环
+            paths.pop()
+          }
+        }else {
+          // 如果是普通值，直接返回 []
+          return []
+        }
+      }
+
+      let paths = findPath(dirTree, function(val) {return val === 4})
+      
+    </script>
+  </body>
+</html>
