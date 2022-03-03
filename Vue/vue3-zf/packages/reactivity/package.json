@@ -1,0 +1,17 @@
+{
+  "name": "@vue/reactivity",
+  "version": "1.0.0",
+  "module": "dist/reactivity.es.js",
+  "license": "MIT",
+  "buildOptions": {
+    "name": "VueReactivity",
+    "formats": [
+      "es",
+      "cjs",
+      "umd"
+    ]
+  },
+  "dependencies": {
+    "@vue/shared": "1.0.0"
+  }
+}

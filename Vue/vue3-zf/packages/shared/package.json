@@ -1,0 +1,13 @@
+{
+  "name": "@vue/shared",
+  "version": "1.0.0",
+  "license": "MIT",
+  "buildOptions": {
+    "name": "VueShared",
+    "formats": [
+      "es",
+      "cjs",
+      "umd"
+    ]
+  }
+}
