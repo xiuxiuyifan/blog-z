@@ -1,8 +1,5 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.VueReactivity = {}));
-})(this, (function (exports) { 'use strict';
+var VueReactivity = (function (exports) {
+  'use strict';
 
   const isObject = val => typeof val == 'object' && val != null;
 
@@ -44,4 +41,6 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+  return exports;
+
+})({});

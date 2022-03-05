@@ -8,7 +8,7 @@
     "formats": [
       "es",
       "cjs",
-      "umd"
+      "iife"
     ]
   },
   "dependencies": {

@@ -1,8 +1,5 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.VueShared = {}));
-})(this, (function (exports) { 'use strict';
+var VueShared = (function (exports) {
+	'use strict';
 
 	const isObject = val => typeof val == 'object' && val != null;
 	const isNumber = val => typeof val == 'number';
@@ -22,4 +19,6 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+	return exports;
+
+})({});

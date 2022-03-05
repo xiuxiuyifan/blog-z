@@ -278,11 +278,11 @@ export default {
   },
 ```
 
-运行 yarn build
+运行 yarn build， 就可以在对应的 package 的 dist 下面生成打包后的文件了。
 
+![image-20220305164010526](C:\Users\z\Documents\笔记\images\image-20220305164010526.png)
 
-
-
+到这里我们的 多模块打包的环境就已经搭建好了，下面就开始写对应模块的代码了。
 
 ## 二、响应式模块
 
@@ -385,28 +385,6 @@ weakMap 和 Map 的区别
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```
-
-```
 
 
 
