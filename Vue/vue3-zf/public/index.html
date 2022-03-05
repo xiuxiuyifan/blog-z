@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@next"></script>
+
+    <script>
+      const proxy = new Proxy(
+        {},
+        {
+          get: function (target, key, receiver) {
+            return receiver;
+          },
+        }
+      );
+      console.log(proxy)
+      console.log(proxy.xxx)   // 获取任意属性，都会走 get 拦截属性的操作
+      console.log(proxy.xxx === proxy); // true
+      // let {reactive, readonly, shallowReactive, shallowReadonly} = Vue
+
+      // // 都是返回 对象的响应式副本
+      // let o1 = reactive({a: 1, b: {age: 100}})
+      // let o2 = readonly({a: 2, b: {age: 100}})
+      // let o3 = shallowReactive({a: 3, b: {age : 100}})
+      // let o4 = shallowReadonly({a: 4, b: {age: 10}})
+
+      // console.log(o1.b)    // 获取到的是一个代理对象
+      // o2.b.age = 100       // 深层仅读的对象属性不能被修改
+      // console.log(o3.b)    // 浅 的代理对象，下面的对象不会被代理
+      // o4.b.age = 9         // 浅的只读的对象 深层的还可以修改
+      // console.log(o4.b.age)
+    </script>
+  </body>
+</html>
