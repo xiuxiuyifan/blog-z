@@ -35,6 +35,24 @@ yarn add typescript rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve
   ],
 }
 ```
+tsconfig.json `paths`字段配置
+
+```json
+为了支持后面 在子模块中相互引用 @vue/ 下面的子模块而配置的
+
+比如在 reactive 里面引用 @vue/shared 
+import {isObject} from '@vue/shared'
+
+{
+"paths": {
+       "@vue/*": [
+        "packages/*/src"
+       ]
+     }
+}
+```
+
+
 
 > 目录结构
 
@@ -63,7 +81,7 @@ yarn add typescript rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "buildOptions": {
+  "buildOptions": {    // 给 rollup.config.js 生成 builder 文件格式使用的
     "name": "VueReactivity",
     "formats": [
       "esm-bundler",
@@ -197,6 +215,8 @@ let target = process.env.target;
 // 2. 动态声明 多个 output 配置
 // 3. 添加其他配置信息 （插件信息）
 
+
+// output umd 规范 一定要有名字
 let currentPath = path.join(__dirname, 'packages', target)
 
 let packageJson = require(`${currentPath}/package.json`)
@@ -208,7 +228,7 @@ function genOutput(buildOptions) {
     return {
       file: `${currentPath}/dist/${target}.${format}.js`,
       format: format,
-      name: format === 'umd' ? buildOptions.name : undefined    // output umd 规范 一定要有名字
+      name: buildOptions.name
     }
   })
 }
@@ -216,7 +236,7 @@ function genOutput(buildOptions) {
 export default {
   input: `${currentPath}/src/index.ts`,
   output: genOutput(buildOptions),
-  plugin: [
+  plugins: [
     ts({
       tsconfig: path.resolve(__dirname, "tsconfig.json"),
     }),
@@ -250,9 +270,17 @@ export default {
 
 ```
 
+我们再修改根目录下面的 `script`脚本
+
+```json
+ "scripts": {
+    "build": "node ./scripts/build.js"
+  },
+```
+
+运行 yarn build
 
 
-### 5、开发环境打包
 
 
 
@@ -350,6 +378,9 @@ weakMap 和 Map 的区别
 
 
 
+## 十、仓库地址
+
+[Vue3 源码学习笔记](https://gitee.com/xiuxiuyifan/blog-z/tree/master/Vue/vue3-zf)
 
 
 
@@ -369,6 +400,13 @@ weakMap 和 Map 的区别
 
 
 
+
+
+
+
+```
+
+```
 
 
 

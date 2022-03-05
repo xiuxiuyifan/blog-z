@@ -22,7 +22,7 @@ function genOutput(buildOptions) {
     return {
       file: `${currentPath}/dist/${target}.${format}.js`,
       format: format,
-      name: format === 'umd' ? buildOptions.name : undefined
+      name: buildOptions.name
     }
   })
 }
@@ -30,7 +30,7 @@ function genOutput(buildOptions) {
 export default {
   input: `${currentPath}/src/index.ts`,
   output: genOutput(buildOptions),
-  plugin: [
+  plugins: [
     ts({
       tsconfig: path.resolve(__dirname, "tsconfig.json"),
     }),

@@ -1,4 +1,4 @@
-import { isObject } from "../../shared/src";
+import { isObject } from "@vue/shared";
 import { mutableHandlers, readonlyHandlers, shallowReactiveHandlers, shallowReadOnlyHandlers } from "./baseHandlers";
 
 // 用 weakmap 容器缓存原始对象时候被代理过了，
