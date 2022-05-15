@@ -31,3 +31,22 @@ async function createFile(dirTree, paths = []) {
 }
 
 createFile(dirTree);
+
+
+from: en
+to: zh
+query: equal
+transtype: realtime
+simple_means_flag: 3
+sign: 337501.116076
+token: 6b7da1c1ad9f059bc69ac4033bb7641d
+domain: common
+
+from: en
+to: zh
+query: has
+transtype: realtime
+simple_means_flag: 3
+sign: 234035.487682
+token: 6b7da1c1ad9f059bc69ac4033bb7641d
+domain: common

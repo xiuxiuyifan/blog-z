@@ -1,0 +1,14 @@
+入口代码块
+page1 page1.js
+page2 page2.js
+page3 page3.js
+
+异步加载代码库
+src_asyncModule1_js src_asyncModule1_js.js
+
+defaultVendors 缓存组对应的代码块
+defaultVendors-node_modules_jquery_dist_jquery_js defaultVendors-node_modules_jquery_dist_jquery_js.js
+defaultVendors-node_modules_lodash_lodash_js defaultVendors-node_modules_lodash_lodash_js.js
+default 缓存组代码块
+default-src_module1_js default-src_module1_js.js
+default-src_module2_js default-src_module2_js.js

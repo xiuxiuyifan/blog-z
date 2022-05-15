@@ -1,0 +1,9 @@
+{
+  "name": "eslint",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint-config-jammy": "^0.0.9"
+  }
+}

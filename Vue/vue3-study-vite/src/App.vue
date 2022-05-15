@@ -1,9 +1,39 @@
 <template>
+  <div>hello world</div>
+  <div>{{ userStore.name }}</div>
+  <div>{{ name1 }}</div>
+  <div>{{ name }}</div>
 
+  <div>{{ userStore.fullName }}</div>
+
+  <button @click="handleLogin">login</button>
+
+  <div>code：{{ appStore.code }}</div>
 </template>
 
 <script setup lang="ts">
-import {effect, reactive, ref} from "vue"
+import { storeToRefs } from "pinia";
+import { effect, reactive, ref, computed } from "vue";
+import { useUserStore } from "./store/user";
+import { useAppStore } from "./store/app";
+
+const userStore = useUserStore();
+
+userStore.$subscribe(() => {}, { detached: true });
+
+const appStore = useAppStore();
+
+const name1 = computed(() => userStore.name);
+
+const { name } = storeToRefs(userStore);
+
+const handleLogin = () => {
+  appStore.login();
+};
+
+// userStore.updateName("李四");
+
+// name.value = "李四";
 
 // 1. 普通的 effect 函数
 
@@ -14,7 +44,6 @@ import {effect, reactive, ref} from "vue"
 // })
 
 // a.value = 2
-
 
 // 2. effect 的返回值 runner 函数允许你在合适的时机去动手执行 effect 的回调，
 //    如果传入的函数有返回值，将在 runner 执行的时候返回对应的返回值
@@ -36,7 +65,6 @@ import {effect, reactive, ref} from "vue"
 // run = true
 // runner()
 // console.log(a)  // value
-
 
 // 3. lazy  懒执行 effect 函数  runner 调用之后才会触发 effect 的执行
 
@@ -78,33 +106,25 @@ import {effect, reactive, ref} from "vue"
 
 // console.log(dummy) // 2 此时值更新了
 
-
 // let runner = effect(() => {
 //   console.log('hiihi')
 // })
 
-function a() {
-    return 'a'
-}
-function b() {
-    return 'b'
-}
+// function a() {
+//   return "a";
+// }
+// function b() {
+//   return "b";
+// }
 
-function c() {
-    return 'c'
-}
-function d() {
-    a()
-    b()
-    c()
-    return 'd'
-}
-var ret = d()
-
-
-
+// function c() {
+//   return "c";
+// }
+// function d() {
+//   a();
+//   b();
+//   c();
+//   return "d";
+// }
+// var ret = d();
 </script>
-
-<style>
-
-</style>
